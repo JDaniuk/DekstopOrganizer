@@ -3,16 +3,15 @@ import os
 from platform import system
 operating_system = system()
 files = []
+folders = []
 file_types = {
     "Document": [".docx", ".odt"],
     "Pdf": ".pdf",
     "Image": [".jpg", ".png"],
-    "Archive":[".tar", ".rar", ".zip", ".7z"]
-
-    
-    
-    
+    "Archive":[".tar", ".rar", ".zip", ".7z"],
+    "Music":[".mp3"],
     }
+folder_names = ["Documents", "PDFs", "Images", "Archives", "Other Files",]
 #change directory to desktop
 if operating_system == "Windows":
     desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
@@ -25,8 +24,8 @@ else:
 for filename in os.listdir(desktop):
     if os.path.isfile(filename): #check if it is a file
         files.append(filename)
-
-
+    else:
+        folders.append(filename)
 
 def organize_file(file, destination):
     try:
@@ -35,12 +34,16 @@ def organize_file(file, destination):
         else:
             os.mkdir(destination)
             shutil.move(file,destination)
-    except:
+    except Exception as e:
         #print(f"There was an error with organizing {file}")
+        print(e)
         pass
 
 
-
+for folder in folders:
+    if folder in folder_names:
+        continue
+    organize_file(folder, "Folders")
 
 #iterate over the files
 for file in files:
@@ -57,6 +60,8 @@ for file in files:
         organize_file(file,"Images")
     if extension in file_types["Archive"]:
         organize_file(file,"Archives")
+    if extension in file_types["Music"]:
+        organize_file(file,"Music")
     else:
         organize_file(file,"Other Files")
 
